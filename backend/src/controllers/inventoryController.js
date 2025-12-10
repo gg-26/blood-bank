@@ -50,7 +50,7 @@ const getInventory = async (req, res) => {
  */
 const addBloodUnit = async (req, res) => {
   try {
-    const { blood_type, collection_date, expiration_date, storage_location_id, donor_id } = req.body;
+    const { blood_type, collection_date, expiration_date, storage_location_id, donor_id, units = 1 } = req.body;
 
     // Resolve storage location.
     // For the classroom demo, if no storage_location_id is provided,
@@ -84,29 +84,39 @@ const addBloodUnit = async (req, res) => {
       }
     }
 
-    const bloodUnit = await BloodInventory.create({
-      blood_type,
-      collection_date: collection_date || new Date(),
-      expiration_date,
-      storage_location_id: storageLocationId,
-      donor_id,
-      status: 'available'
-    });
+    const collectionDateValue = collection_date ? new Date(collection_date) : new Date();
+    const expirationDateValue = expiration_date
+      ? new Date(expiration_date)
+      : new Date(collectionDateValue.getTime() + 42 * 24 * 60 * 60 * 1000); // default 42 days
 
-    const unitWithDetails = await BloodInventory.findByPk(bloodUnit.unit_id, {
-      include: [
-        {
-          model: Hospital,
-          as: 'hospital',
-          attributes: ['hospital_name']
-        }
-      ]
-    });
+    const createdUnits = [];
+    for (let i = 0; i < Math.max(1, units); i++) {
+      const bloodUnit = await BloodInventory.create({
+        blood_type,
+        collection_date: collectionDateValue,
+        expiration_date: expirationDateValue,
+        storage_location_id: storageLocationId,
+        donor_id,
+        status: 'available'
+      });
+
+      const unitWithDetails = await BloodInventory.findByPk(bloodUnit.unit_id, {
+        include: [
+          {
+            model: Hospital,
+            as: 'hospital',
+            attributes: ['hospital_name']
+          }
+        ]
+      });
+      createdUnits.push(unitWithDetails);
+    }
 
     res.status(201).json({
       success: true,
-      message: 'Blood unit added successfully',
-      unit: unitWithDetails
+      message: 'Blood unit(s) added successfully',
+      count: createdUnits.length,
+      units: createdUnits
     });
   } catch (error) {
     console.error('Add blood unit error:', error);

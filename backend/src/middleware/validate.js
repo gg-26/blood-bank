@@ -40,8 +40,14 @@ const validateLogin = [
  */
 const validateBloodInventory = [
   body('blood_type').isIn(['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-']).withMessage('Invalid blood type'),
-  body('collection_date').optional().isISO8601().withMessage('Invalid date format'),
-  body('expiration_date').optional().isISO8601().withMessage('Invalid date format'),
+  body('collection_date')
+    .optional()
+    .custom((val) => !isNaN(Date.parse(val)))
+    .withMessage('Invalid collection date'),
+  body('expiration_date')
+    .optional()
+    .custom((val) => !isNaN(Date.parse(val)))
+    .withMessage('Invalid expiration date'),
   // For the demo, storage_location_id is optional; backend will resolve it for hospital users.
   body('storage_location_id').optional().isUUID().withMessage('Valid hospital ID is required'),
   body('status').optional().isIn(['available', 'reserved', 'used', 'expired']).withMessage('Invalid status'),

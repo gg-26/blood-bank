@@ -39,8 +39,15 @@ const updateProfile = async (req, res) => {
     if (name) user.name = name;
     if (phone !== undefined) user.phone = phone;
     if (blood_group) user.blood_group = blood_group;
-    if (latitude !== undefined) user.latitude = latitude;
-    if (longitude !== undefined) user.longitude = longitude;
+    const latVal = latitude === '' ? null : latitude;
+    const lonVal = longitude === '' ? null : longitude;
+
+    if (latVal !== undefined) {
+      user.latitude = latVal === null ? null : parseFloat(latVal);
+    }
+    if (lonVal !== undefined) {
+      user.longitude = lonVal === null ? null : parseFloat(lonVal);
+    }
     if (last_donation_date) user.last_donation_date = last_donation_date;
 
     await user.save();

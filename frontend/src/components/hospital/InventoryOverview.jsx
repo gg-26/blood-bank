@@ -4,10 +4,13 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 
 const InventoryOverview = ({ inventory, onRefresh }) => {
   const [showAddForm, setShowAddForm] = useState(false);
+  const defaultDate = new Date().toISOString().split('T')[0];
   const [formData, setFormData] = useState({
     blood_type: '',
-    collection_date: new Date().toISOString().split('T')[0],
-    storage_location_id: ''
+    collection_date: defaultDate,
+    expiration_date: '',
+    storage_location_id: '',
+    units: 1
   });
 
   // Calculate stock by blood type
@@ -26,17 +29,28 @@ const InventoryOverview = ({ inventory, onRefresh }) => {
   const handleAddUnit = async (e) => {
     e.preventDefault();
     try {
-      await api.post('/inventory', formData);
+      // Build payload without empty strings to avoid UUID/date validation errors
+    const payload = {
+      blood_type: formData.blood_type,
+      collection_date: formData.collection_date,
+      expiration_date: formData.expiration_date || undefined,
+      storage_location_id: formData.storage_location_id || undefined,
+      units: formData.units
+    };
+
+      await api.post('/inventory', payload);
       setShowAddForm(false);
       setFormData({
         blood_type: '',
-        collection_date: new Date().toISOString().split('T')[0],
-        storage_location_id: ''
+        collection_date: defaultDate,
+        expiration_date: '',
+        storage_location_id: '',
+        units: 1
       });
       onRefresh();
     } catch (error) {
-      console.error('Failed to add unit:', error);
-      alert('Failed to add blood unit');
+      console.error('Failed to add unit:', error?.response?.data || error);
+      alert(error?.response?.data?.error || 'Failed to add blood unit');
     }
   };
 
@@ -81,6 +95,17 @@ const InventoryOverview = ({ inventory, onRefresh }) => {
                 required
                 value={formData.collection_date}
                 onChange={(e) => setFormData({ ...formData, collection_date: e.target.value })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Units</label>
+              <input
+                type="number"
+                min="1"
+                required
+                value={formData.units}
+                onChange={(e) => setFormData({ ...formData, units: parseInt(e.target.value, 10) || 1 })}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
               />
             </div>
