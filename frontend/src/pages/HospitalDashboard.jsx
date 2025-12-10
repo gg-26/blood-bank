@@ -4,6 +4,7 @@ import api from '../services/api';
 import InventoryOverview from '../components/hospital/InventoryOverview';
 import RequestManager from '../components/hospital/RequestManager';
 import DonorSearch from '../components/hospital/DonorSearch';
+import DonorFrequency from '../components/hospital/DonorFrequency';
 
 const HospitalDashboard = () => {
   const { user, logout } = useAuth();
@@ -55,6 +56,7 @@ const HospitalDashboard = () => {
         <div className="px-4 py-6 sm:px-0">
           <InventoryOverview inventory={inventory} onRefresh={fetchData} />
           <RequestManager requests={requests} onRefresh={fetchData} />
+          <DonorFrequency />
           <DonorSearch />
         </div>
       </main>

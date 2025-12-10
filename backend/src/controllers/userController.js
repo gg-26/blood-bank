@@ -1,6 +1,39 @@
 const { User } = require('../models');
 
 /**
+ * Get donor stats (for prioritization)
+ */
+const getDonorStats = async (req, res) => {
+  try {
+    const donors = await User.findAll({
+      where: { role: 'donor' },
+      attributes: [
+        'user_id',
+        'name',
+        'email',
+        'phone',
+        'blood_group',
+        'donation_count',
+        'last_donation_date'
+      ],
+      order: [
+        ['donation_count', 'DESC'],
+        ['last_donation_date', 'DESC NULLS LAST']
+      ]
+    });
+
+    res.json({
+      success: true,
+      count: donors.length,
+      donors
+    });
+  } catch (error) {
+    console.error('Get donor stats error:', error);
+    res.status(500).json({ error: 'Failed to fetch donor stats', message: error.message });
+  }
+};
+
+/**
  * Get current user profile
  */
 const getProfile = async (req, res) => {
@@ -124,6 +157,7 @@ module.exports = {
   getProfile,
   updateProfile,
   getUserById,
-  getAllUsers
+  getAllUsers,
+  getDonorStats
 };
 
