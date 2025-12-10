@@ -10,6 +10,7 @@ const InventoryOverview = ({ inventory, onRefresh }) => {
     collection_date: defaultDate,
     expiration_date: '',
     storage_location_id: '',
+    donor_id: '',
     units: 1
   });
 
@@ -35,6 +36,7 @@ const InventoryOverview = ({ inventory, onRefresh }) => {
       collection_date: formData.collection_date,
       expiration_date: formData.expiration_date || undefined,
       storage_location_id: formData.storage_location_id || undefined,
+      donor_id: formData.donor_id || undefined,
       units: formData.units
     };
 
@@ -45,6 +47,7 @@ const InventoryOverview = ({ inventory, onRefresh }) => {
         collection_date: defaultDate,
         expiration_date: '',
         storage_location_id: '',
+        donor_id: '',
         units: 1
       });
       onRefresh();
@@ -107,6 +110,16 @@ const InventoryOverview = ({ inventory, onRefresh }) => {
                 value={formData.units}
                 onChange={(e) => setFormData({ ...formData, units: parseInt(e.target.value, 10) || 1 })}
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">Donor User ID (optional)</label>
+              <input
+                type="text"
+                value={formData.donor_id}
+                onChange={(e) => setFormData({ ...formData, donor_id: e.target.value })}
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                placeholder="UUID of donor"
               />
             </div>
             <div className="flex items-end">
