@@ -85,12 +85,8 @@ const getRequests = async (req, res) => {
     const { status, urgency_level, blood_type_needed } = req.query;
     const where = {};
 
-    // Donors see all pending requests
-    // Hospitals see only their own requests
-    // Admins see all requests
-    if (req.user.role === 'hospital') {
-      where.hospital_id = req.user.user_id;
-    } else if (req.user.role === 'donor') {
+    // Donors see only their own; hospitals and admins see all (so hospitals can view donor-originated requests)
+    if (req.user.role === 'donor') {
       where.requester_id = req.user.user_id;
     }
 

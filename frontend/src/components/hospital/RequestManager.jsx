@@ -113,6 +113,8 @@ const RequestManager = ({ requests, onRefresh }) => {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Blood Type</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Units</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Urgency</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Requester</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Donations</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
             </tr>
@@ -123,6 +125,12 @@ const RequestManager = ({ requests, onRefresh }) => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{request.blood_type_needed}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{request.units_required}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{request.urgency_level}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {request.requester?.name || 'N/A'}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {request.requester?.donation_count ?? 'N/A'}
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{request.status}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm">
                   {request.status === 'pending' && (
